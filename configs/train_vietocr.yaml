@@ -1,0 +1,77 @@
+# ============================================================
+# Phase 1.5: Fine-tune VietOCR on the InkData line dataset.
+# Designed for the vgg_seq2seq backbone. Override on the CLI:
+#   python -m src.train.train_vietocr --config configs/train_vietocr.yaml
+# ============================================================
+
+# Which VietOCR backbone to fine-tune from.
+# One of: vgg_seq2seq, vgg_transformer.
+backbone: vgg_seq2seq
+
+# Start from the official pretrained weights for `backbone`. Set False to
+# train from scratch (much slower, not recommended).
+pretrained: true
+
+# Device. "auto" picks cuda:0 if torch.cuda.is_available().
+device: auto
+
+# --- Dataset ---
+dataset:
+  name: inkdata
+  # `data_root` is prepended to each path inside the annotation files.
+  data_root: data/data_line
+  # These two files are produced by prepare_data.py. Run that first.
+  train_annotation: data/data_line/train_split.txt
+  valid_annotation: data/data_line/val_split.txt
+  # Used by the final evaluation script.
+  test_annotation: data/data_line/test_line_annotation.txt
+  # VietOCR resizes every crop to this height; width is variable but clamped.
+  image_height: 32
+  image_min_width: 32
+  image_max_width: 512
+
+# --- Augmentation ---
+aug:
+  image_aug: true
+  # `masked_language_model` is only meaningful for vgg_transformer.
+  masked_language_model: false
+
+# --- Optimizer (OneCycleLR schedule) ---
+optimizer:
+  max_lr: 0.0003
+  pct_start: 0.1
+
+# --- Trainer ---
+trainer:
+  batch_size: 32
+  # Total optimizer steps. ~20k is a reasonable starting point for 5k samples
+  # with batch_size 32 (~125 epochs).
+  iters: 20000
+  # Print running loss every N steps.
+  print_every: 200
+  # Run validation (accuracy on val set) every N steps.
+  valid_every: 2500
+  # Number of validation samples used during in-loop evaluation. Use the full
+  # val set if you have a fast GPU, otherwise keep this <= ~1000.
+  metrics: 1000
+
+# --- Output paths (will be created if missing) ---
+output:
+  dir: models/vietocr
+  # Final exported weights (loadable by src.recognizer.TextRecognizer).
+  export_name: vietocr_seq2seq_inkdata.pth
+  # Periodic checkpoint (so you can resume after a crash).
+  checkpoint_name: vietocr_seq2seq_inkdata_ckpt.pth
+  log_name: train.log
+
+# --- Train/val split (used by prepare_data.py) ---
+split:
+  source: data/data_line/train_line_annotation.txt
+  val_ratio: 0.10
+  seed: 42
+
+# --- Vocab ---
+# By default we use VietOCR's built-in Vietnamese vocab. If your dataset has
+# extra characters, prepare_data.py will warn you and you can paste the
+# extended vocab string here.
+vocab: null

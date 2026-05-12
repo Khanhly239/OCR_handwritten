@@ -1,0 +1,46 @@
+# ============================================================
+# Default configuration for handwriting OCR pipeline (Phase 1)
+# ============================================================
+
+# --- Device ---
+# "auto" picks cuda:0 if available, else cpu.
+device: auto
+
+# --- Detector (PaddleOCR DBNet) ---
+detector:
+  lang: vi
+  use_angle_cls: true
+  # Pixel-level binarization threshold for DBNet.
+  det_db_thresh: 0.3
+  # Box-level confidence threshold.
+  det_db_box_thresh: 0.5
+  # Larger unclip ratio -> looser box (helps avoid clipping Vietnamese diacritics).
+  det_db_unclip_ratio: 2.0
+  # Optional: cap longest side to speed up detection. null = no resize.
+  det_limit_side_len: 960
+  det_limit_type: max
+
+# --- Recognizer (VietOCR) ---
+recognizer:
+  # Choose backbone: "vgg_transformer" (accurate) or "vgg_seq2seq" (fast).
+  model: vgg_transformer
+  # Batch size when recognizing multiple crops at once.
+  batch_size: 16
+  # Optional: path to a fine-tuned .pth checkpoint (produced by
+  # `python -m src.train.train_vietocr`). When set, the model loads these
+  # weights instead of VietOCR's default pretrained ones. Must match the
+  # `model` backbone above.
+  weights_path: null
+
+# --- Pipeline / post-processing ---
+pipeline:
+  # Slight polygon expansion before crop to keep diacritics intact.
+  expand_ratio: 0.05
+  # Two box centers within this many pixels are considered on the same line.
+  reading_order_y_tolerance: 10
+  # Save visualization PNG next to the JSON output.
+  save_visualization: false
+
+# --- Output paths ---
+output:
+  dir: data/outputs

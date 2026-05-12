@@ -1,0 +1,31 @@
+# ============================================================
+# Phase 1: PaddleOCR (detection) + VietOCR (recognition)
+# Tested on Python 3.10 (Windows) and Colab.
+# For Colab GPU: replace paddlepaddle with paddlepaddle-gpu.
+# ============================================================
+
+# --- Detection ---
+# Note: paddlepaddle 2.6.1 đã bị gỡ khỏi PyPI; dùng 2.6.2 (cùng dòng 2.6.x).
+paddlepaddle==2.6.2
+paddleocr==2.7.3
+
+# --- Recognition ---
+vietocr==0.3.13
+
+# --- Deep learning (VietOCR requires torch) ---
+torch>=2.0,<2.4
+torchvision
+
+# --- Image / numeric ---
+opencv-python==4.10.0.84
+Pillow>=10.0
+numpy<2.0
+pyyaml
+
+# --- Web UI / demo ---
+streamlit>=1.36
+pandas
+matplotlib
+
+# --- Testing ---
+pytest

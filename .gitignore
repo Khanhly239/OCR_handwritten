@@ -1,0 +1,47 @@
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Model weights / caches
+*.pth
+*.pt
+*.onnx
+*.tar
+*.zip
+.paddleocr/
+~/.cache/
+models/
+
+# Generated train/val splits and per-run artifacts
+data/data_line/train_split.txt
+data/data_line/val_split.txt
+data/data_line/_smoke/
+configs/train_vietocr_colab.yaml
+
+# Data outputs (keep samples, ignore generated)
+data/outputs/
+data/raw/
+
+# Dataset lớn — để trên Google Drive / HuggingFace, không commit
+data/data_line/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Jupyter
+*.ipynb_checkpoints
